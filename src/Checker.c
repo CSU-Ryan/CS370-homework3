@@ -28,10 +28,14 @@ int get_shm_id(const int pipe_fd) {
  */
 int write_shm(const int shm_id, const int data) {
     int *shm = shmat(shm_id, NULL, 0);
+
     printf("Checker process [%d]: created shared memory segment at (%p) with initial value %d.\n",
         getpid(), shm, *shm);
+
     if (shm == (int *)-1) { return 1; }
+
     *shm = data;
+
     shmdt(shm);
 
     return 0;
@@ -70,7 +74,9 @@ int main(const int argc, char **argv) {
 
     printf("I REACHED THIS LINE!\n");
 
-    if (write_shm(shm_id, divides)) { return 1; }
+    const int return_value = write_shm(shm_id, divides);
+
+    if (return_value) { return 1; }
 
     printf("Checker process [%d]: wrote result (%d) to shared memory.\n",
         getpid(), divides);
