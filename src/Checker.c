@@ -57,15 +57,15 @@ int main(const int argc, char **argv) {
 
     const int divides = (dividend % divisor == 0);
 
-    { // Prints divisibility
-        printf("Checker process [%d]: %d *IS",
-            getpid(), dividend);
+    // Prints divisibility
+    printf("Checker process [%d]: %d *IS",
+        getpid(), dividend);
 
-        if (!divides) { printf(" NOT"); }
+    if (!divides) { printf(" NOT"); }
 
-        printf("* divisible by %d.\n",
-            divisor);
-    }
+    printf("* divisible by %d.\n",
+        divisor);
+    // End print
 
     if (write_shm(shm_id, divides)) { return 1; }
 
