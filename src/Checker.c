@@ -67,9 +67,9 @@ int main(const int argc, char **argv) {
 
     printf("* divisible by %d.\n",
         divisor);
-    // End print
 
-    printf("I REACHED THIS LINE!");
+    printf("I REACHED THIS LINE!\n");
+
     if (write_shm(shm_id, divides)) { return 1; }
 
     printf("Checker process [%d]: wrote result (%d) to shared memory.\n",
