@@ -49,7 +49,6 @@ int main(const int argc, char **argv) {
 
     const int shm_id = get_shm_id(pipe_FD);
     if (shm_id == -1) { return 1; }
-    if (write_shm(shm_id, divides)) { return 1; }
 
-    return 0;
+    return write_shm(shm_id, divides);
 }
