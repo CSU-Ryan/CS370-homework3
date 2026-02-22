@@ -179,7 +179,7 @@ int main(const int argc, char **argv) {
         int return_value;
         waitpid(child_pids[i], &return_value, 0);
         printf("Coordinator: child process ID [%d] returned %d.\n",
-            child_pids[i], return_value);
+            child_pids[i], WEXITSTATUS(return_value));
 
 
         int response;
