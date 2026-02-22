@@ -159,7 +159,7 @@ int main(const int argc, char **argv) {
             printf("Coordinator: forked process with ID %d.\n", pid);
 
             write(pipes[i][1], &shm_ids[i], sizeof (int));
-            printf("Coordinator: wrote shm ID %d to pipe (%llu bytes)",
+            printf("Coordinator: wrote shm ID %d to pipe (%llu bytes)\n",
                 shm_ids[i], sizeof (int));
         }
         else {
