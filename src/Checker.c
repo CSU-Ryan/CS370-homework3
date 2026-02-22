@@ -69,6 +69,7 @@ int main(const int argc, char **argv) {
         divisor);
     // End print
 
+    printf("I REACHED THIS LINE!");
     if (write_shm(shm_id, divides)) { return 1; }
 
     printf("Checker process [%d]: wrote result (%d) to shared memory.\n",
