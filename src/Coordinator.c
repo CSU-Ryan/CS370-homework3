@@ -78,7 +78,7 @@ void clean_pipe_writers(int pipes[][2]) {
  * @param pipes Pipe FD list
  * @warning Only use when pipes have not been given to other threads.
  */
-void quick_exit(int memory_ids[], int pipes[][2]) {
+void quick_close(int memory_ids[], int pipes[][2]) {
     clean_memory(memory_ids);
     clean_pipe_readers(pipes);
     clean_pipe_writers(pipes);
@@ -132,13 +132,13 @@ int main(const int argc, char **argv) {
 
     // Initialize shared memory
     if (init_memory(shm_ids)) {
-        quick_exit(shm_ids, pipes);
+        quick_close(shm_ids, pipes);
         return 1;
     }
 
     // Initialize pipes
     if (init_pipes(pipes)) {
-        quick_exit(shm_ids, pipes);
+        quick_close(shm_ids, pipes);
         return 1;
     }
 
@@ -193,6 +193,6 @@ int main(const int argc, char **argv) {
         }
     }
 
-    quick_exit(shm_ids, pipes);
+    quick_close(shm_ids, pipes);
     printf("Coordinator: exiting.\n");
 }
