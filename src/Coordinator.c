@@ -176,8 +176,11 @@ int main(const int argc, char **argv) {
     for (int i = 0; i < CHECKER_COUNT; i++) {
         printf("Coordinator: waiting on child process ID %d...\n", child_pids[i]);
 
-        int _;
-        waitpid(child_pids[i], &_, 0);
+        int return_value;
+        waitpid(child_pids[i], &return_value, 0);
+        printf("Coordinator: child process ID [%d] returned %d.\n",
+            child_pids[i], return_value);
+
 
         int response;
         read_shm(shm_ids[i], &response);
