@@ -101,8 +101,13 @@ void execute_checker(const int divisor, const int dividend, const int pipe_fd) {
         (char *) NULL);
 }
 
-void write_pipe(const int write_fd, int data, int size) {
+int read_shm(const int shm_id, int *addr) {
+    int *shm = shmat(shm_id, NULL, 0);
+    if (shm == (int *)-1) { return 1; }
+    *addr = *shm;
+    shmdt(shm);
 
+    return 0;
 }
 
 /**
@@ -140,8 +145,8 @@ int main(const int argc, char **argv) {
     // Checker creation loop
     for (int i = 0; i < CHECKER_COUNT; i++) {
         const int dividend = dividends[i];
-        const int pid = fork();
 
+        const int pid = fork();
         if (pid < 0) {
             // Failed to fork
             printf("Coordinator: could not fork child process.\n");
@@ -153,9 +158,9 @@ int main(const int argc, char **argv) {
             child_pids[i] = pid;
             printf("Coordinator: forked process with ID %d.\n", pid);
 
-            write(pipes[i][1], &shm_ids[i], sizeof shm_ids[i]);
+            write(pipes[i][1], &shm_ids[i], sizeof (int));
             printf("Coordinator: wrote shm ID %d to pipe (%llu bytes)",
-                shm_ids[i], sizeof shm_ids[i]);
+                shm_ids[i], sizeof (int));
         }
         else {
             // Code for the Child
@@ -163,22 +168,29 @@ int main(const int argc, char **argv) {
 
             // Code should be unreachable
             printf("Coordinator Child: failed to execute checker.\n");
+            return 1;
         }
     }
 
+    // Wait on checkers
     for (int i = 0; i < CHECKER_COUNT; i++) {
         printf("Coordinator: waiting on child process ID %d...\n", child_pids[i]);
 
         int _;
         waitpid(child_pids[i], &_, 0);
 
-        const int *shared_address = shmat(shm_ids[i], NULL, 0);
-        const int result = *shared_address;
+        int response;
+        read_shm(shm_ids[i], &response);
 
-        printf("Coordinator: result %d read from shared memory: %d is divisible by %d.\n",
-            result, dividends[i], divisor);
+        printf("Coordinator: result %d read from shared memory: %d is",
+            response, dividends[i]);
+
+        if (!response) { printf(" not"); }
+
+        printf(" divisible by %d.\n",
+            divisor);
     }
 
-
+    quick_exit(shm_ids, pipes);
     printf("Coordinator: exiting.\n");
 }
