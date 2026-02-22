@@ -67,8 +67,7 @@ int main(const int argc, char **argv) {
             divisor);
     }
 
-    const int write_error = write_shm(shm_id, divides);
-    if (write_error) { return 1; }
+    if (write_shm(shm_id, divides)) { return 1; }
 
     printf("Checker process [%d]: wrote result (%d) to shared memory.\n",
         getpid(), divides);
