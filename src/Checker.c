@@ -28,6 +28,8 @@ int get_shm_id(const int pipe_fd) {
  */
 int write_shm(const int shm_id, const int data) {
     int *shm = shmat(shm_id, NULL, 0);
+    printf("Checker process [%d]: created shared memory segment at (%p) with initial value %d.\n",
+        getpid(), shm, *shm);
     if (shm == (int *)-1) { return 1; }
     *shm = data;
     shmdt(shm);
