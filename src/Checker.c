@@ -46,7 +46,7 @@ int main(const int argc, char **argv) {
         return 1;
     }
 
-    printf("Checker process [%d]: starting.", getpid());
+    printf("Checker process [%d]: starting.\n", getpid());
 
     const int divisor = atoi(argv[1]);
     const int dividend = atoi(argv[2]);
@@ -63,7 +63,7 @@ int main(const int argc, char **argv) {
 
         if (!divides) { printf(" NOT"); }
 
-        printf("* divisible by %d",
+        printf("* divisible by %d.\n",
             divisor);
     }
 
