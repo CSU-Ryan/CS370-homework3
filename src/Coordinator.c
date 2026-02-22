@@ -182,13 +182,15 @@ int main(const int argc, char **argv) {
         int response;
         read_shm(shm_ids[i], &response);
 
-        printf("Coordinator: result %d read from shared memory: %d is",
-            response, dividends[i]);
+        { // Prints divisibility
+            printf("Coordinator: result %d read from shared memory: %d is",
+                response, dividends[i]);
 
-        if (!response) { printf(" not"); }
+            if (!response) { printf(" not"); }
 
-        printf(" divisible by %d.\n",
-            divisor);
+            printf(" divisible by %d.\n",
+                divisor);
+        }
     }
 
     quick_exit(shm_ids, pipes);

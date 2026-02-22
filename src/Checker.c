@@ -5,14 +5,19 @@
 
 /**
  * Reads the shared memory ID from the given pipeFD.
- * @param pipeFD File descriptor for read-end of pipe
+ * @param pipe_fd File descriptor for read-end of pipe
  * @return Shared memory ID from the pipe. If errors occur, returns -1.
  */
-int get_shm_id(const int pipeFD) {
-    int pipe_read;
-    if (read(pipeFD, &pipe_read, sizeof (int)) <= 0) { return -1; }
+int get_shm_id(const int pipe_fd) {
+    int pipe_output;
+    const int bytes_read = read(pipe_fd, &pipe_output, sizeof (int));
 
-    return pipe_read;
+    printf("Checker process [%d]: read %d bytes containing shm ID %d.\n",
+        getpid(), bytes_read, pipe_output);
+
+    if (bytes_read <= 0) { return -1; }
+
+    return pipe_output;
 }
 
 /**
@@ -41,14 +46,32 @@ int main(const int argc, char **argv) {
         return 1;
     }
 
+    printf("Checker process [%d]: starting.", getpid());
+
     const int divisor = atoi(argv[1]);
     const int dividend = atoi(argv[2]);
     const int pipe_FD = atoi(argv[3]);
 
-    int divides = (dividend % divisor == 0);
-
     const int shm_id = get_shm_id(pipe_FD);
     if (shm_id == -1) { return 1; }
 
-    return write_shm(shm_id, divides);
+    const int divides = (dividend % divisor == 0);
+
+    { // Prints divisibility
+        printf("Checker process [%d]: %d *IS",
+            getpid(), dividend);
+
+        if (!divides) { printf(" NOT"); }
+
+        printf("* divisible by %d",
+            divisor);
+    }
+
+    const int write_error = write_shm(shm_id, divides);
+    if (write_error) { return 1; }
+
+    printf("Checker process [%d]: wrote result (%d) to shared memory.\n",
+        getpid(), divides);
+
+    return 0;
 }
