@@ -105,6 +105,12 @@ void execute_checker(const int divisor, const int dividend, const int pipe_fd) {
         (char *) NULL);
 }
 
+/**
+ * Reads single integer from shared memory
+ * @param shm_id ID of shared memory segment
+ * @param addr where to write data from shm
+ * @return 0 on success, 1 on failure
+ */
 int read_shm(const int shm_id, int *addr) {
     int *shm = shmat(shm_id, NULL, 0);
 
@@ -164,6 +170,7 @@ int main(const int argc, char **argv) {
 
         if (pid > 0) {
             // Code for the Parent
+            // Notes child pid and writes shm id to pipe
             child_pids[i] = pid;
             printf("Coordinator: forked process with ID %d.\n", pid);
 

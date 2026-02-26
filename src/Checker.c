@@ -12,14 +12,13 @@ int get_shm_id(const int pipe_fd) {
     int pipe_output;
     const int bytes_read = read(pipe_fd, &pipe_output, sizeof (int));
 
-    if (bytes_read >= 1) {
-        printf("Checker process [%d]: read %d bytes containing shm ID %d.\n",
-            getpid(), bytes_read, pipe_output);
-    }
-    else {
+    if (bytes_read <= 0) {
         printf("Checker process [%d]: read no bytes from pipe.\n", getpid());
         return -1;
     }
+
+    printf("Checker process [%d]: read %d bytes containing shm ID %d.\n",
+            getpid(), bytes_read, pipe_output);
 
     return pipe_output;
 }
@@ -63,14 +62,14 @@ int main(const int argc, char **argv) {
     const int shm_id = get_shm_id(pipe_fd);
     if (shm_id == -1) { return 1; }
 
+
+
     const int divides = (dividend % divisor == 0);
 
     // Prints divisibility
     printf("Checker process [%d]: %d *IS",
         getpid(), dividend);
-
     if (!divides) { printf(" NOT"); }
-
     printf("* divisible by %d.\n",
         divisor);
 
