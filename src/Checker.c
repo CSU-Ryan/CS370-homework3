@@ -12,10 +12,14 @@ int get_shm_id(const int pipe_fd) {
     int pipe_output;
     const int bytes_read = read(pipe_fd, &pipe_output, sizeof (int));
 
-    printf("Checker process [%d]: read %d bytes containing shm ID %d.\n",
-        getpid(), bytes_read, pipe_output);
-
-    if (bytes_read <= 0) { return -1; }
+    if (bytes_read >= 1) {
+        printf("Checker process [%d]: read %d bytes containing shm ID %d.\n",
+            getpid(), bytes_read, pipe_output);
+    }
+    else {
+        printf("Checker process [%d]: read no bytes from pipe.\n", getpid());
+        return -1;
+    }
 
     return pipe_output;
 }
@@ -29,10 +33,13 @@ int get_shm_id(const int pipe_fd) {
 int write_shm(const int shm_id, const int data) {
     int *shm = shmat(shm_id, NULL, 0);
 
-    printf("Checker process [%d]: created shared memory segment at (%p) with initial value %d.\n",
-        getpid(), shm, *shm);
+    if (shm == (int *)-1) {
+        printf("Checker process [%d]: failed to attach shared memory segment.\n", getpid());
+        return 1;
+    }
 
-    if (shm == (int *)-1) { return 1; }
+    printf("Checker process [%d]: created shared memory segment at (%p) with initial value %d.\n",
+           getpid(), shm, *shm);
 
     *shm = data;
 
@@ -56,9 +63,9 @@ int main(const int argc, char **argv) {
 
     const int divisor = atoi(argv[1]);
     const int dividend = atoi(argv[2]);
-    const int pipe_FD = atoi(argv[3]);
+    const int pipe_fd = atoi(argv[3]);
 
-    const int shm_id = get_shm_id(pipe_FD);
+    const int shm_id = get_shm_id(pipe_fd);
     if (shm_id == -1) { return 1; }
 
     const int divides = (dividend % divisor == 0);
@@ -74,9 +81,7 @@ int main(const int argc, char **argv) {
 
     printf("I REACHED THIS LINE!\n");
 
-    const int return_value = write_shm(shm_id, divides);
-
-    if (return_value) { return 1; }
+    if (write_shm(shm_id, divides)) { return 1; }
 
     printf("Checker process [%d]: wrote result (%d) to shared memory.\n",
         getpid(), divides);

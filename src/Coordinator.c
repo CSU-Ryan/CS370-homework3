@@ -79,6 +79,8 @@ void clean_pipe_writers(int pipes[][2]) {
  * @warning Only use when pipes have not been given to other threads.
  */
 void quick_close(int memory_ids[], int pipes[][2]) {
+    printf("Coordinator: exiting.\n");
+
     clean_memory(memory_ids);
     clean_pipe_readers(pipes);
     clean_pipe_writers(pipes);
@@ -103,7 +105,12 @@ void execute_checker(const int divisor, const int dividend, const int pipe_fd) {
 
 int read_shm(const int shm_id, int *addr) {
     int *shm = shmat(shm_id, NULL, 0);
-    if (shm == (int *)-1) { return 1; }
+
+    if (shm == (int *)-1) {
+        printf("Coordinator: failed to attach shared memory.\n");
+        return 1;
+    }
+
     *addr = *shm;
     shmdt(shm);
 
@@ -197,5 +204,4 @@ int main(const int argc, char **argv) {
     }
 
     quick_close(shm_ids, pipes);
-    printf("Coordinator: exiting.\n");
 }
