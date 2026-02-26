@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/shm.h>
-#include <errno.h>
 
 /**
  * Reads the shared memory ID from the given pipeFD.
@@ -36,17 +35,11 @@ int write_shm(const int shm_id, const int data) {
 
     if (shm == (int *)-1) {
         printf("Checker process [%d]: failed to attach shared memory segment.\n", getpid());
-        perror("Checker process [%d]: ");
         return 1;
     }
 
-    printf("Checker process [%d]: created shared memory segment at (%p) with initial value %d.\n",
-           getpid(), shm, *shm);
-
     *shm = data;
-
     shmdt(shm);
-
     return 0;
 }
 
@@ -80,8 +73,6 @@ int main(const int argc, char **argv) {
 
     printf("* divisible by %d.\n",
         divisor);
-
-    printf("I REACHED THIS LINE!\n");
 
     if (write_shm(shm_id, divides)) { return 1; }
 
