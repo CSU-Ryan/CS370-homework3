@@ -14,7 +14,8 @@
  */
 int init_memory(int ids[]) {
     for (int i = 0; i < CHECKER_COUNT; i++) {
-        const int shm_id = shmget(IPC_PRIVATE, sizeof (int), IPC_CREAT);
+        const int shm_id = shmget(IPC_PRIVATE, sizeof (int),
+            IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
         if (shm_id < 0) {
             printf("Coordinator: shmget failed.\n");
