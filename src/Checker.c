@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/shm.h>
+#include <errno.h>
 
 /**
  * Reads the shared memory ID from the given pipeFD.
@@ -35,6 +36,7 @@ int write_shm(const int shm_id, const int data) {
 
     if (shm == (int *)-1) {
         printf("Checker process [%d]: failed to attach shared memory segment.\n", getpid());
+        printf("%s\n", strerror(errno));
         return 1;
     }
 
