@@ -6,6 +6,7 @@
 #include <sys/shm.h>
 
 #define CHECKER_COUNT 4
+#define CHECKER_EXE "./checker.o"
 
 
 /**
@@ -100,8 +101,8 @@ void execute_checker(const int divisor, const int dividend, const int pipe_fd) {
     char pipe_string[16];
     sprintf(pipe_string, "%d", pipe_fd);
 
-    execlp("bin/checker.o",
-        "bin/checker.o", divisor_string, dividend_string, pipe_string,
+    execlp(CHECKER_EXE,
+        CHECKER_EXE, divisor_string, dividend_string, pipe_string,
         (char *) NULL);
 }
 
