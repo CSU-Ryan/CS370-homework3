@@ -17,7 +17,7 @@ int get_shm_id(const int pipe_fd) {
         return -1;
     }
 
-    printf("Checker process [%d]: read %d bytes containing shm ID %d.\n",
+    printf("Checker process [%d]: read %d bytes containing shm ID %d\n",
             getpid(), bytes_read, pipe_output);
 
     return pipe_output;
