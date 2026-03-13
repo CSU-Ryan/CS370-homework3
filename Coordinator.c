@@ -194,8 +194,8 @@ int main(const int argc, char **argv) {
         printf("Coordinator: waiting on child process ID %d...\n", child_pids[i]);
 
         int return_value;
-        // int child_pid = wait(&return_value);
-        waitpid(child_pids[i], &return_value, 0);
+        wait(&return_value);
+        // waitpid(child_pids[i], &return_value, 0);
 
         int response;
         read_shm(shm_ids[i], &response);
