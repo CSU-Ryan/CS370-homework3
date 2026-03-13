@@ -6,7 +6,7 @@
 #include <sys/shm.h>
 
 #define CHECKER_COUNT 4
-#define CHECKER_EXE "./checker.o"
+#define CHECKER_EXE "./checker"
 
 
 /**
